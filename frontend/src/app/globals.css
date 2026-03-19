@@ -1,0 +1,60 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    @apply bg-slate-950 text-slate-50 antialiased;
+  }
+
+  * {
+    @apply box-border;
+  }
+}
+
+@layer utilities {
+  .app-shell-bg {
+    @apply bg-slate-950 bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950;
+  }
+
+  .app-card {
+    @apply bg-white rounded-2xl border border-slate-200 shadow-sm;
+  }
+
+  .app-input {
+    @apply w-full text-sm border border-slate-300 rounded-lg px-3.5 py-2.5 text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-600 focus:border-emerald-600 transition-colors;
+  }
+
+  .app-btn-primary {
+    @apply inline-flex items-center justify-center gap-2 rounded-lg bg-emerald-800 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-slate-950 disabled:cursor-not-allowed disabled:opacity-60;
+  }
+
+  .app-btn-secondary {
+    @apply inline-flex items-center justify-center gap-2 rounded-lg bg-slate-100 px-4 py-2.5 text-sm font-semibold text-slate-900 border border-slate-200 transition-colors hover:bg-slate-200 disabled:cursor-not-allowed disabled:opacity-60;
+  }
+
+  .app-link {
+    @apply text-emerald-800 hover:text-slate-950;
+  }
+
+  .app-scroll-smooth {
+    scroll-behavior: smooth;
+  }
+
+  .app-scrollbar::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  .app-scrollbar::-webkit-scrollbar-track {
+    @apply bg-slate-900/40;
+  }
+
+  .app-scrollbar::-webkit-scrollbar-thumb {
+    @apply rounded-full bg-slate-600/60;
+  }
+}

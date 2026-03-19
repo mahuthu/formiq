@@ -1,0 +1,163 @@
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "linux-musl-openssl-3.0.x"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  OWNER
+  ADMIN
+  REVIEWER
+  UPLOADER
+}
+
+enum Plan {
+  FREE
+  STARTER
+  PROFESSIONAL
+  ENTERPRISE
+}
+
+enum DocumentStatus {
+  PENDING
+  PROCESSING
+  REVIEW
+  APPROVED
+  FAILED
+  ARCHIVED
+}
+
+enum FieldType {
+  TEXT
+  NUMBER
+  DATE
+  CURRENCY
+  BOOLEAN
+  LIST
+  EMAIL
+  PHONE
+}
+
+model Organization {
+  id                String    @id @default(uuid())
+  name              String
+  slug              String    @unique
+  plan              Plan      @default(FREE)
+  documentQuota     Int       @default(50)
+  documentsUsed     Int       @default(0)
+  paystackCustomerCode  String?
+  paystackSubCode       String?
+  webhookUrl        String?
+  webhookSecret     String?
+  apiKey            String    @unique @default(uuid())
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  users      User[]
+  templates  Template[]
+  documents  Document[]
+  records    Record[]
+}
+
+model User {
+  id          String    @id @default(uuid())
+  orgId       String
+  email       String
+  name        String
+  passwordHash String?
+  role        UserRole  @default(UPLOADER)
+  avatarUrl   String?
+  googleId    String?
+  lastActiveAt DateTime?
+  createdAt   DateTime  @default(now())
+
+  org         Organization @relation(fields: [orgId], references: [id], onDelete: Cascade)
+  documents   Document[]
+  approvals   Record[]     @relation("Approver")
+
+  @@unique([orgId, email])
+}
+
+model Template {
+  id           String    @id @default(uuid())
+  orgId        String?
+  name         String
+  documentType String
+  description  String?
+  isSystem     Boolean   @default(false)
+  fields       Json
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  org          Organization? @relation(fields: [orgId], references: [id], onDelete: Cascade)
+  documents    Document[]
+}
+
+model Document {
+  id               String         @id @default(uuid())
+  orgId            String
+  uploadedBy       String
+  templateId       String?
+  originalFilename String
+  storageKey       String
+  mimeType         String
+  fileSize         Int
+  pageCount        Int            @default(1)
+  status           DocumentStatus @default(PENDING)
+  errorMessage     String?
+  processingMs     Int?
+  createdAt        DateTime       @default(now())
+  updatedAt        DateTime       @updatedAt
+
+  org        Organization @relation(fields: [orgId], references: [id], onDelete: Cascade)
+  uploader   User         @relation(fields: [uploadedBy], references: [id])
+  template   Template?    @relation(fields: [templateId], references: [id])
+  extraction Extraction?
+  record     Record?
+}
+
+model Extraction {
+  id               String   @id @default(uuid())
+  documentId       String   @unique
+  fields           Json
+  confidenceScores Json
+  rawResponse      String?
+  modelVersion     String
+  processingMs     Int
+  createdAt        DateTime @default(now())
+
+  document Document @relation(fields: [documentId], references: [id], onDelete: Cascade)
+}
+
+model Record {
+  id          String    @id @default(uuid())
+  orgId       String
+  documentId  String    @unique
+  data        Json
+  tags        String[]
+  reviewedBy  String?
+  approvedBy  String?
+  approvedAt  DateTime?
+  notes       String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  org      Organization @relation(fields: [orgId], references: [id], onDelete: Cascade)
+  document Document     @relation(fields: [documentId], references: [id], onDelete: Cascade)
+  approver User?        @relation("Approver", fields: [approvedBy], references: [id])
+}
+
+model UsageEvent {
+  id        String   @id @default(uuid())
+  orgId     String
+  type      String
+  quantity  Int      @default(1)
+  metadata  Json?
+  createdAt DateTime @default(now())
+
+  @@index([orgId, createdAt])
+}
