@@ -39,11 +39,11 @@ On your server, create a `.env` file in the project root.
 - `DATABASE_URL`: `postgresql://formiq:YOUR_SECURE_PASSWORD@localhost:5436/formiq`
 - `POSTGRES_PASSWORD`: Use a strong, unique password.
 - `JWT_SECRET`: Generate with `openssl rand -hex 32`.
-- `FRONTEND_URL`: `http://20.250.163.236:8080`
-- `NEXT_PUBLIC_API_URL`: `http://20.250.163.236:8080/api`
+- `FRONTEND_URL`: `http://20.250.163.236:9000`
+- `NEXT_PUBLIC_API_URL`: `http://20.250.163.236:9000/api`
 - `S3_*`: Populate with your production credentials.
 
-## 3. Nginx Setup (IP-based, Port 8080)
+## 3. Nginx Setup (IP-based, Port 9000)
 
 1.  Copy `nginx.ip.conf` to `/etc/nginx/sites-available/formiq`.
 2.  Enable the site:
@@ -54,7 +54,7 @@ sudo nginx -t && sudo systemctl reload nginx
 ```
 
 > [!NOTE]
-> Since we are using port `8080`, ensure your VM firewall (e.g., UFW or Azure/AWS Network Security Group) allows incoming traffic on port `8080`.
+> We are using port `9000` for the main entry point to avoid conflicts with common ports used by Django (8000/8080). Ensure your VM firewall (e.g., Azure or cloud security group) allows incoming traffic on port **9000**.
 
 ## 4. Run the Application
 
@@ -63,7 +63,7 @@ sudo nginx -t && sudo systemctl reload nginx
 3.  Ensure your `.env` is ready.
 4.  Run the deployment script: `./deploy.sh`
 
-The application will be accessible at: `http://20.250.163.236:8080`
+The application will be accessible at: `http://20.250.163.236:9000`
 
 The script will:
 - Pull the latest code.
