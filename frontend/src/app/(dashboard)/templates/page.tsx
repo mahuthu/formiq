@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { api } from '@/lib/api';
 import { Plus, Trash2, BookTemplate, Lock, Pencil, ChevronUp } from 'lucide-react';
 
-const FIELD_TYPES = ['TEXT','NUMBER','DATE','CURRENCY','BOOLEAN','LIST','EMAIL','PHONE'];
+const FIELD_TYPES = ['TEXT', 'NUMBER', 'DATE', 'CURRENCY', 'BOOLEAN', 'LIST', 'EMAIL', 'PHONE', 'URL', 'TEXTAREA'];
 
 function TemplateBuilder({ template, onSave, onCancel }: { template?: any; onSave: (t: any) => void; onCancel: () => void }) {
   const [name, setName] = useState(template?.name || '');
@@ -61,23 +61,30 @@ function TemplateBuilder({ template, onSave, onCancel }: { template?: any; onSav
             <Plus className="w-3 h-3" /> Add field
           </button>
         </div>
-        <div className="space-y-2">
+        <div className="space-y-2 border-t border-slate-100 pt-3 mt-1">
           {fields.map((field, i) => (
-            <div key={i} className="flex gap-2 items-center">
-              <input value={field.name} onChange={e => updateField(i, 'name', e.target.value)}
-                placeholder="Field name" 
-                className="app-input flex-1 px-3 py-2" />
-              <select value={field.type} onChange={e => updateField(i, 'type', e.target.value)}
-                className="app-input w-auto px-2 py-2">
-                {FIELD_TYPES.map(t => <option key={t} value={t}>{t.toLowerCase()}</option>)}
-              </select>
-              <label className="flex items-center gap-1 text-xs text-slate-600 cursor-pointer">
-                <input type="checkbox" checked={field.required} onChange={e => updateField(i, 'required', e.target.checked)} />
-                Req
-              </label>
-              <button onClick={() => removeField(i)} className="p-1.5 hover:bg-red-50 rounded text-gray-400 hover:text-red-500 transition-colors">
-                <Trash2 className="w-3.5 h-3.5" />
-              </button>
+            <div key={i} className="flex gap-3 items-center">
+              <div className="flex-[3]">
+                <input value={field.name} onChange={e => updateField(i, 'name', e.target.value)}
+                  placeholder="Field name (e.g. Invoice Number)"
+                  className="app-input px-3 py-1.5" />
+              </div>
+              <div className="flex-[1.5]">
+                <select value={field.type} onChange={e => updateField(i, 'type', e.target.value)}
+                  className="app-input px-2 py-1.5 text-xs">
+                  {FIELD_TYPES.map(t => <option key={t} value={t}>{t.toLowerCase() === 'textarea' ? 'long text' : t.toLowerCase()}</option>)}
+                </select>
+              </div>
+              <div className="flex items-center gap-2">
+                <label className="flex items-center gap-1.5 text-[10px] uppercase font-bold text-slate-400 cursor-pointer hover:text-slate-600 transition-colors">
+                  <input type="checkbox" checked={field.required} onChange={e => updateField(i, 'required', e.target.checked)}
+                    className="w-3.5 h-3.5 rounded border-slate-300 text-emerald-600 focus:ring-emerald-500" />
+                  Req
+                </label>
+                <button onClick={() => removeField(i)} className="p-1.5 hover:bg-red-50 rounded text-gray-300 hover:text-red-500 transition-colors">
+                  <Trash2 className="w-3.5 h-3.5" />
+                </button>
+              </div>
             </div>
           ))}
         </div>

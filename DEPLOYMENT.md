@@ -33,36 +33,37 @@ sudo apt install -y nginx certbot python3-certbot-nginx
 
 ## 2. Environment Configuration
 
-On your server, create a `.env` file in the project root. You can copy the template from `.env.example`.
+On your server, create a `.env` file in the project root.
 
-### Production Variable Checklist:
-- `DATABASE_URL`: `postgresql://formiq:YOUR_SECURE_PASSWORD@postgres:5432/formiq`
+### Production Variable Checklist (IP: 20.250.163.236):
+- `DATABASE_URL`: `postgresql://formiq:YOUR_SECURE_PASSWORD@localhost:5436/formiq`
 - `POSTGRES_PASSWORD`: Use a strong, unique password.
 - `JWT_SECRET`: Generate with `openssl rand -hex 32`.
-- `FRONTEND_URL`: `https://yourdomain.ke`
-- `NEXT_PUBLIC_API_URL`: `https://yourdomain.ke/api`
-- `S3_*`: Populate with your production Cloudflare R2 or AWS S3 credentials.
+- `FRONTEND_URL`: `http://20.250.163.236:8080`
+- `NEXT_PUBLIC_API_URL`: `http://20.250.163.236:8080/api`
+- `S3_*`: Populate with your production credentials.
 
-## 3. Nginx Setup & SSL
+## 3. Nginx Setup (IP-based, Port 8080)
 
-1.  Copy `nginx.conf.template` to `/etc/nginx/sites-available/formiq`.
-2.  Edit the file to replace `example.com` with your domain.
-3.  Enable the site and obtain an SSL certificate:
+1.  Copy `nginx.ip.conf` to `/etc/nginx/sites-available/formiq`.
+2.  Enable the site:
 
 ```bash
 sudo ln -s /etc/nginx/sites-available/formiq /etc/nginx/sites-enabled/
 sudo nginx -t && sudo systemctl reload nginx
-
-# Generate SSL certificate
-sudo certbot --nginx -d yourdomain.ke
 ```
+
+> [!NOTE]
+> Since we are using port `8080`, ensure your VM firewall (e.g., UFW or Azure/AWS Network Security Group) allows incoming traffic on port `8080`.
 
 ## 4. Run the Application
 
 1.  Clone the repository: `git clone https://github.com/your-repo/formiq.git`
 2.  Navigate to the directory: `cd formiq`
 3.  Ensure your `.env` is ready.
-4.  Run the deployment script: `./deploy.sh` (make sure it's executable: `chmod +x deploy.sh`).
+4.  Run the deployment script: `./deploy.sh`
+
+The application will be accessible at: `http://20.250.163.236:8080`
 
 The script will:
 - Pull the latest code.

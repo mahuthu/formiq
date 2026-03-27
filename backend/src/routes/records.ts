@@ -10,15 +10,26 @@ recordsRouter.get('/', requireAuth, async (req: AuthRequest, res) => {
   const { templateId, status, from, to, tag, search, page = '1', limit = '20' } = req.query as any;
   const skip = (parseInt(page) - 1) * parseInt(limit);
 
-  const docWhere: any = { orgId: req.user!.orgId };
-  if (templateId) docWhere.templateId = templateId;
-  if (status) docWhere.status = status;
-
   const recWhere: any = { orgId: req.user!.orgId };
+
+  // Filter by Template (relation filtering)
+  if (templateId) {
+    recWhere.document = { templateId };
+  }
+
+  // Status filtering (now via document status)
+  if (status) {
+    recWhere.document = { ...recWhere.document, status };
+  }
+
   if (from || to) {
     recWhere.createdAt = {};
     if (from) recWhere.createdAt.gte = new Date(from);
-    if (to) recWhere.createdAt.lte = new Date(to);
+    if (to) {
+      const toDate = new Date(to);
+      toDate.setHours(23, 59, 59, 999);
+      recWhere.createdAt.lte = toDate;
+    }
   }
   if (tag) recWhere.tags = { has: tag };
 
@@ -49,11 +60,19 @@ recordsRouter.get('/export', requireAuth, async (req: AuthRequest, res) => {
   const { format = 'csv', templateId, from, to } = req.query as any;
 
   const where: any = { orgId: req.user!.orgId };
-  if (templateId) where.document = { templateId };
+
+  if (templateId) {
+    where.document = { templateId };
+  }
+
   if (from || to) {
     where.createdAt = {};
     if (from) where.createdAt.gte = new Date(from);
-    if (to) where.createdAt.lte = new Date(to);
+    if (to) {
+      const toDate = new Date(to);
+      toDate.setHours(23, 59, 59, 999);
+      where.createdAt.lte = toDate;
+    }
   }
 
   const records = await prisma.record.findMany({

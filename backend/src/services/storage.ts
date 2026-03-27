@@ -45,6 +45,21 @@ export async function getFileAsBase64(key: string, mimeType: string): Promise<{ 
   };
 }
 
+export async function getFileAsBuffer(key: string, mimeType: string): Promise<{ buffer: Buffer; resolvedMimeType: string }> {
+  const response = await s3.send(new GetObjectCommand({ Bucket: BUCKET, Key: key }));
+  const chunks: Uint8Array[] = [];
+  const stream = response.Body as any;
+
+  for await (const chunk of stream) {
+    chunks.push(chunk);
+  }
+
+  return {
+    buffer: Buffer.concat(chunks),
+    resolvedMimeType: response.ContentType || mimeType,
+  };
+}
+
 export async function getSignedUrl(key: string, expiresIn = 3600): Promise<string> {
   const command = new GetObjectCommand({ Bucket: BUCKET, Key: key });
   return awsGetSignedUrl(s3, command, { expiresIn });

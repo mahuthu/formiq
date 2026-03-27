@@ -40,6 +40,8 @@ enum FieldType {
   LIST
   EMAIL
   PHONE
+  URL
+  TEXTAREA
 }
 
 model Organization {
@@ -121,14 +123,15 @@ model Document {
 }
 
 model Extraction {
-  id               String   @id @default(uuid())
-  documentId       String   @unique
-  fields           Json
-  confidenceScores Json
-  rawResponse      String?
-  modelVersion     String
-  processingMs     Int
-  createdAt        DateTime @default(now())
+  id                String   @id @default(uuid())
+  documentId        String   @unique
+  fields            Json
+  confidenceScores  Json
+  rawResponse       String?
+  modelVersion      String
+  processingMs      Int
+  extractionMethod  String?
+  createdAt         DateTime @default(now())
 
   document Document @relation(fields: [documentId], references: [id], onDelete: Cascade)
 }

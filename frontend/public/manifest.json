@@ -1,0 +1,17 @@
+{
+    "name": "FormIQ — Document Intelligence",
+    "short_name": "FormIQ",
+    "description": "Transform printed and handwritten documents into structured data with AI.",
+    "start_url": "/",
+    "display": "standalone",
+    "background_color": "#ffffff",
+    "theme_color": "#065f46",
+    "icons": [
+        {
+            "src": "/icon.png",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "any maskable"
+        }
+    ]
+}

@@ -30,9 +30,7 @@ export default function LandingPage() {
       <div className="sticky top-0 z-50 border-b border-slate-200/80 bg-white/90 backdrop-blur">
         <div className="mx-auto max-w-6xl px-6 h-16 flex items-center justify-between">
           <Link href="/" className={`flex items-center gap-2.5 ${serif.className}`}>
-            <span className="w-8 h-8 rounded-md bg-emerald-800 text-white inline-flex items-center justify-center">
-              <FileText className="w-4 h-4" />
-            </span>
+            <img src="/icon.png" alt="FormIQ" className="w-8 h-8 rounded-md" />
             <span className="text-lg font-semibold">FormIQ</span>
           </Link>
 
@@ -215,11 +213,13 @@ export default function LandingPage() {
           ].map((s) => (
             <div key={s.num} className="bg-white p-8 hover:bg-slate-50 transition-colors">
               <p className={`${mono.className} text-xs text-slate-400`}>{s.num}</p>
-              <div className="mt-5 w-11 h-11 rounded-xl bg-emerald-50 flex items-center justify-center">
-                {s.icon}
+              <div className="flex items-center gap-2.5">
+                <img src="/icon.png" alt="FormIQ" className="w-8 h-8 rounded-lg shrink-0" />
+                <div>
+                  <h3 className={`${serif.className} mt-5 text-xl font-medium text-slate-950`}>{s.title}</h3>
+                  <p className="mt-2 text-sm text-slate-600 leading-relaxed">{s.desc}</p>
+                </div>
               </div>
-              <h3 className={`${serif.className} mt-5 text-xl font-medium text-slate-950`}>{s.title}</h3>
-              <p className="mt-2 text-sm text-slate-600 leading-relaxed">{s.desc}</p>
             </div>
           ))}
         </div>
@@ -359,11 +359,10 @@ export default function LandingPage() {
               </ul>
               <Link
                 href={p.cta.href}
-                className={`mt-6 block text-center rounded-lg px-4 py-2.5 text-sm font-semibold transition-colors ${
-                  p.cta.solid
+                className={`mt-6 block text-center rounded-lg px-4 py-2.5 text-sm font-semibold transition-colors ${p.cta.solid
                     ? 'bg-emerald-800 text-white hover:bg-slate-950'
                     : 'border border-slate-200 text-slate-950 hover:border-slate-950'
-                }`}
+                  }`}
               >
                 {p.cta.label}
               </Link>
@@ -450,13 +449,12 @@ export default function LandingPage() {
                 href={`/blog/${p.slug}`}
                 className="block border-b border-slate-200 pb-6 hover:opacity-90 transition-opacity"
               >
-                <span className={`${mono.className} inline-flex rounded-full px-3 py-1 text-[10px] tracking-[0.1em] uppercase ${
-                  p.tag === 'tax'
+                <span className={`${mono.className} inline-flex rounded-full px-3 py-1 text-[10px] tracking-[0.1em] uppercase ${p.tag === 'tax'
                     ? 'bg-amber-50 text-amber-700'
                     : p.tag === 'health'
                       ? 'bg-emerald-50 text-emerald-800'
                       : 'bg-indigo-50 text-indigo-700'
-                }`}>
+                  }`}>
                   {p.tagLabel}
                 </span>
                 <h3 className={`${serif.className} mt-4 text-xl font-medium leading-snug text-slate-950`}>
@@ -498,9 +496,7 @@ export default function LandingPage() {
           <div className="grid md:grid-cols-4 gap-10">
             <div>
               <div className={`flex items-center gap-2.5 ${serif.className}`}>
-                <span className="w-8 h-8 rounded-md bg-emerald-800 text-white inline-flex items-center justify-center">
-                  <FileText className="w-4 h-4" />
-                </span>
+                <img src="/icon.png" alt="FormIQ" className="w-8 h-8 rounded-md" />
                 <span className="text-lg font-semibold">FormIQ</span>
               </div>
               <p className="mt-3 text-sm text-slate-400 max-w-md">
@@ -519,7 +515,7 @@ export default function LandingPage() {
             <div>
               <p className={`${mono.className} text-[10px] tracking-[0.12em] uppercase text-slate-400 mb-4`}>Company</p>
               <div className="flex flex-col gap-2 text-sm">
-                
+
                 <Link href="/blog" className="block text-slate-400 hover:text-white">Blog</Link>
                 <Link href="/contact" className="block text-slate-400 hover:text-white">Contact</Link>
               </div>

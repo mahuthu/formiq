@@ -34,7 +34,7 @@ export default function RecordsPage() {
         </div>
         <a href={api.records.exportUrl({ format: 'csv', ...(filters.templateId ? { templateId: filters.templateId } : {}), ...(filters.from ? { from: filters.from } : {}), ...(filters.to ? { to: filters.to } : {}) })}
           className="app-btn-secondary">
-          <Download className="w-4 h-4" /> Export CSV
+          <Download className="w-4 h-4" /> Export CSV/XLSX/JSON
         </a>
       </div>
 

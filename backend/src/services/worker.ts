@@ -2,7 +2,7 @@ import { Worker, Queue, Job } from 'bullmq';
 import { redis } from '../lib/redis';
 import { prisma } from '../lib/prisma';
 import { extractFromDocument, computeOverallConfidence } from './extraction';
-import { getFileAsBase64 } from './storage';
+import { getFileAsBuffer } from './storage';
 import { logger } from '../lib/logger';
 import { dispatchWebhook } from './webhook';
 
@@ -39,12 +39,12 @@ export function startWorker() {
         const fields = template.fields as any[];
 
         // Get file from storage
-        const { base64, resolvedMimeType } = await getFileAsBase64(storageKey, mimeType);
+        const { buffer, resolvedMimeType } = await getFileAsBuffer(storageKey, mimeType);
 
-        // Run AI extraction
+        // Run hybrid extraction (Azure DI → GPT-4.1 mini fallback)
         const start = Date.now();
         const extraction = await extractFromDocument(
-          base64,
+          buffer,
           resolvedMimeType,
           template.documentType,
           fields
@@ -60,6 +60,7 @@ export function startWorker() {
             ),
             modelVersion: extraction.modelVersion,
             processingMs: extraction.processingMs,
+            extractionMethod: extraction.extractionMethod,
           },
         });
 

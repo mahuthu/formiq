@@ -72,8 +72,9 @@ export const api = {
     },
     get: (id: string) => request<any>(`/records/${id}`),
     exportUrl: (params?: Record<string, string>) => {
-      const qs = params ? '?' + new URLSearchParams(params).toString() : '';
-      return `${BASE_URL}/records/export${qs}&token=${getToken()}`;
+      const qs = params ? new URLSearchParams(params).toString() : '';
+      const separator = qs ? '&' : '';
+      return `${BASE_URL}/records/export?${qs}${separator}token=${getToken()}`;
     },
   },
   org: {

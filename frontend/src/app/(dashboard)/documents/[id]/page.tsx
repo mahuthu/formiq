@@ -106,27 +106,37 @@ export default function DocumentReviewPage({ params }: { params: { id: string } 
       {/* Side-by-side */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         {/* Document preview */}
-        <div className="app-card overflow-hidden">
-          <div className="px-4 py-3 border-b border-slate-100">
+        <div className="app-card overflow-hidden flex flex-col h-[700px]">
+          <div className="px-4 py-3 border-b border-slate-100 flex items-center justify-between">
             <p className="text-sm font-medium text-slate-700">Original document</p>
+            {doc.signedUrl && (
+              <a href={doc.signedUrl} target="_blank" rel="noopener noreferrer"
+                className="text-xs text-slate-500 hover:text-emerald-700 transition-colors flex items-center gap-1">
+                Open in new tab
+              </a>
+            )}
           </div>
-          <div className="p-4 flex items-center justify-center min-h-64 bg-slate-50">
+          <div className="flex-1 bg-slate-50 relative">
             {doc.signedUrl && doc.mimeType?.startsWith('image/') ? (
-              <img src={doc.signedUrl} alt="Document" className="max-w-full max-h-[600px] object-contain rounded shadow-sm" />
-            ) : doc.signedUrl ? (
-              <div className="text-center">
-                <p className="text-sm text-slate-600 mb-2">PDF document</p>
-                <a href={doc.signedUrl} target="_blank" rel="noopener noreferrer"
-                  className="text-sm app-link hover:underline">Open PDF</a>
+              <div className="flex items-center justify-center h-full p-4">
+                <img src={doc.signedUrl} alt="Document" className="max-w-full max-h-full object-contain rounded shadow-lg" />
               </div>
+            ) : doc.signedUrl ? (
+              <iframe
+                src={`${doc.signedUrl}#view=FitH`}
+                className="w-full h-full border-none"
+                title="Document viewer"
+              />
             ) : (
-              <p className="text-sm text-gray-400">Preview not available</p>
+              <div className="flex items-center justify-center h-full">
+                <p className="text-sm text-gray-400">Preview not available</p>
+              </div>
             )}
           </div>
         </div>
 
         {/* Extracted fields */}
-        <div className="app-card">
+        <div className="app-card flex flex-col h-[700px]">
           <div className="px-4 py-3 border-b border-slate-100 flex items-center justify-between">
             <p className="text-sm font-medium text-slate-700">Extracted data</p>
             <div className="flex items-center gap-2">
@@ -136,7 +146,7 @@ export default function DocumentReviewPage({ params }: { params: { id: string } 
               <span className="text-xs text-slate-500">{confidence}%</span>
             </div>
           </div>
-          <div className="divide-y divide-slate-100 max-h-[600px] overflow-y-auto">
+          <div className="divide-y divide-slate-100 overflow-y-auto flex-1 app-scrollbar">
             {templateFields.map((field: any) => {
               const extracted = extractionFields[field.name];
               const currentVal = fields[field.name] ?? extracted?.value ?? '';
@@ -166,9 +176,8 @@ export default function DocumentReviewPage({ params }: { params: { id: string } 
                       value={currentVal || ''}
                       onChange={e => setFields(prev => ({ ...prev, [field.name]: e.target.value }))}
                       placeholder={extracted?.value === null ? 'Not found' : ''}
-                      className={`app-input px-3 py-2 ${
-                        !currentVal && !extracted?.value ? 'border-gray-100 bg-gray-50 text-gray-400' : 'border-gray-200'
-                      }`}
+                      className={`app-input px-3 py-2 ${!currentVal && !extracted?.value ? 'border-gray-100 bg-gray-50 text-gray-400' : 'border-gray-200'
+                        }`}
                     />
                   )}
                 </div>

@@ -20,7 +20,7 @@ export function verifyToken(token: string): any {
 export async function requireAuth(req: AuthRequest, res: Response, next: NextFunction) {
   try {
     const header = req.headers.authorization;
-    
+
     // API key auth
     if (header?.startsWith('ApiKey ')) {
       const apiKey = header.slice(7);
@@ -32,18 +32,25 @@ export async function requireAuth(req: AuthRequest, res: Response, next: NextFun
     }
 
     // JWT auth
-    if (!header?.startsWith('Bearer ')) {
-      return res.status(401).json({ error: 'Authorization header required' });
+    let token = '';
+    if (header?.startsWith('Bearer ')) {
+      token = header.slice(7);
+    } else if (req.query.token) {
+      token = String(req.query.token);
     }
-    const token = header.slice(7);
+
+    if (!token) {
+      return res.status(401).json({ error: 'Authorization header or token required' });
+    }
+
     const decoded = verifyToken(token);
-    
+
     const user = await prisma.user.findUnique({
       where: { id: decoded.userId },
       include: { org: true },
     });
     if (!user) return res.status(401).json({ error: 'User not found' });
-    
+
     req.user = { id: user.id, orgId: user.orgId, role: user.role, email: user.email };
     req.org = user.org as any;
     next();
